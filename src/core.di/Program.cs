@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace core.app
+namespace core.di
 {
 	class Program
 	{
