@@ -1,0 +1,47 @@
+﻿@page "/"
+@using System.Threading
+@using System.Threading.Tasks
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+<input type="text" @onkeypress="@KeyWasPressed" />
+<BECanvas Width="400" Height="400" @ref="_canvasReference" ></BECanvas>
+
+@code
+{
+	private Blazor.Extensions.Canvas.Canvas2D.Canvas2DContext ctx;
+	protected Blazor.Extensions.BECanvasComponent _canvasReference;
+
+
+	double x = 0.0;
+	double y = 0.0;
+
+	protected Task renderLoop;
+	protected CancellationTokenSource tokenSource;
+
+	private async Task KeyWasPressed(KeyboardEventArgs args)
+	{
+		double moveDistance = 0.5;
+		switch(args.Key)
+		{
+			case "w": y = y > 0 ? y - moveDistance : 0; break;
+			case "s": y = y < 300 ? y + moveDistance : 300; break;
+			case "a": x = x > 0 ? x - moveDistance : 0; break;
+			case "d": x = x < 300 ? x + moveDistance : 300; break;
+		}
+		await ctx.ClearRectAsync(0, 0, 400, 400);
+		await ctx.FillRectAsync(x, y, 100, 100);
+		// await ctx.SetFontAsync("48px serif");
+		// await ctx.StrokeTextAsync("Hello Blazor!!!", 10, 100);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		ctx = await this._canvasReference.CreateCanvas2DAsync();
+		await ctx.SetFillStyleAsync("orange");
+	}
+}
